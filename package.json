@@ -1,0 +1,25 @@
+{
+  "name": "bamazon",
+  "version": "1.0.0",
+  "description": "Node app with mysql functionality. Experience an imaginary Bamazon store from the customer command line, manager, or supervisior. ",
+  "main": "customer.js",
+  "scripts": {
+    "test": ";"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/davebattles/bamazon.git"
+  },
+  "author": "",
+  "license": "GPL-3.0",
+  "bugs": {
+    "url": "https://github.com/davebattles/bamazon/issues"
+  },
+  "homepage": "https://github.com/davebattles/bamazon#readme",
+  "dependencies": {
+    "cli-table": "^0.3.1",
+    "colors": "^1.2.5",
+    "inquirer": "^5.2.0",
+    "mysql": "^2.15.0"
+  }
+}
