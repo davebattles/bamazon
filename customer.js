@@ -78,7 +78,7 @@ function productPurchase() {
 
             connection.query("SELECT * FROM products", function (err, res) {
               var calcPrice = res[item_id].productPrice * purchaseAmount;
-              console.log("\nYour total is today is: $" + calcPrice + "usd");
+              console.log("\nYour total is today is: $" + calcPrice.toFixed(2) + "usd");
               process.exit();
             });
           }
