@@ -4,8 +4,10 @@ var mysql = require("mysql");
 var inquirer = require("inquirer");
 var Table = require("cli-table");
 var colors = require("colors");
-var ora = require("ora");
+
 // Argv vars init
+
+
 command = process.argv[2];
 var connection = mysql.createConnection({
   host: "localhost",
@@ -36,7 +38,7 @@ var queryAllProductsCLI = function () {
       table.push(productArray);
     }
     console.log(table.toString());
-    // TODO:  productPurchase();    
+    productPurchase();
   });
 };
 
@@ -51,6 +53,11 @@ function productPurchase() {
         name: "item_id"
       },
       {
+        type: "input",
+        message: "How many would you like to purchase?",
+        name: "amount"
+      },
+      {
         type: "confirm",
         message: "Are you sure?",
         name: "confirm",
@@ -59,29 +66,38 @@ function productPurchase() {
     ])
     .then(function (inquirerResponse) {
       if (inquirerResponse.confirm) {
-        console.log("Much todo");
-        //TODO: Check if item is in stock
+      connection.query("SELECT * from products", function (err, res) {
+       
+        var purchase_id = inquirerResponse.item_id; //id number the customer selected
+        // var itemID = id - 1; //to match user choice with db item id
+        var purchaseAmount = inquirerResponse.amount; //number of units the customer selected
+        var availAmount = res[purchase_id].productStock;
+        if (purchaseAmount > availAmount) {
+          console.log("There is currently nout enough stock to fill your order")
+        } else {
+          console.log("Thank you for your purchase!");
+          var updatedAmount = availAmount - purchaseAmount;
 
-        // console.log("\nWelcome " + inquirerResponse.username);
-        // console.log("Your " + inquirerResponse.pokemon + " is ready for battle!\n");
-        // typeOfProductIn = inquirerResponse.typeOfProduct;
-        // nameOfProductIn = inquirerResponse.nameOfProduct;
-        // currentBidOfProductIn = inquirerResponse.currentBidOfProduct;
-        // addProductInquirer(typeOfProductIn, nameOfProductIn, currentBidOfProductIn);
-      } else {
-        queryAllProductsCLI();
-      }
+          connection.query("UPDATE products SET ? WHERE ?", [{
+            productStock: updatedAmount
+          }, {
+            item_id: purchase_id
+          }], function (err, res) {});
 
+          connection.query("SELECT * FROM products", function (err, res) {
+            var calcPrice = res[purchase_id].price * purchaseAmount;
+            console.log("\nYour toal is today is: " + calcPrice);
+          });
+        }
+      });
+      //inquirer confirm ending
+    } else {
+      queryAllProductsCLI();
+    }
     });
+
 }
 
-function loading() {
-  var spinner = ora('Processing').start();
-  setTimeout(() => {
-    spinner.color = 'yellow';
-    spinner.text = 'Loading rainbows';
-  }, 1000);
-}
 
 function title() {
   var table = new Table({
