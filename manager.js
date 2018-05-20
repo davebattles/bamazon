@@ -62,7 +62,7 @@ function managerConsole() {
         console.log(inquirerResponse.query);
       }
       if (inquirerResponse.query == "Add New Product") {
-        console.log(inquirerResponse.query);
+        addNewProduct();
       }
     });
 }
@@ -123,7 +123,8 @@ function addNewProduct(){
     if( inquirerResponse.confirm == true){
        addProductInquirer(inquirerResponse.productName, inquirerResponse.productDepartment, inquirerResponse.productPrice, inquirerResponse.productStock);
       } else {
-        managerConsole();
+        console.clear();
+        queryAllProductsCLI();
       }
   });
 
@@ -132,14 +133,16 @@ function addProductInquirer( productNameInput, productDepartmentInput, productPr
   
   var query = connection.query(
     "INSERT INTO products SET ?", {
-      typeOfProduct: typeOfProductInput,
-      nameOfProduct: nameOfProductInput,
-      currentBidOfProduct: currentBidOfProductInput
+      productName: productNameInput,
+      productDepartment: productDepartmentInput,
+      productPrice: productPriceInput,
+      productStock: productStockInput
     },
     function (err, res) {
-      console.clear();
-      queryAllProducts();
+      if (err) throw err;
     }
   );
-  connection.end();
+  console.clear();
+  queryAllProductsCLI();
 }
+

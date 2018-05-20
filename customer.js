@@ -28,8 +28,10 @@ var queryAllProductsCLI = function () {
       colWidths: [10, 40, 10, 10, 10]
     });
     for (var i = 0; i < res.length; i++) {
+      if(res[i].productStock >= 1){
       var productArray = [res[i].item_id, res[i].productName, res[i].productDepartment, res[i].productPrice, res[i].productStock];
       table.push(productArray);
+    }
     }
     console.log(table.toString());
     productPurchase();
