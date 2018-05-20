@@ -17,9 +17,11 @@
   },
   "homepage": "https://github.com/davebattles/bamazon#readme",
   "dependencies": {
+    "chalk-animation": "^1.6.0",
     "cli-table": "^0.3.1",
     "colors": "^1.2.5",
     "inquirer": "^5.2.0",
-    "mysql": "^2.15.0"
+    "mysql": "^2.15.0",
+    "ora": "^2.1.0"
   }
 }
