@@ -69,9 +69,9 @@ function productPurchase() {
       connection.query("SELECT * from products", function (err, res) {
        
         var purchase_id = inquirerResponse.item_id; //id number the customer selected
-        // var itemID = id - 1; //to match user choice with db item id
+        var item_id = purchase_id - 1; //to match user choice with db item id
         var purchaseAmount = inquirerResponse.amount; //number of units the customer selected
-        var availAmount = res[purchase_id].productStock;
+        var availAmount = res[item_id].productStock;
         if (purchaseAmount > availAmount) {
           console.log("There is currently nout enough stock to fill your order")
         } else {
@@ -82,11 +82,14 @@ function productPurchase() {
             productStock: updatedAmount
           }, {
             item_id: purchase_id
-          }], function (err, res) {});
+          }], function (err, res) {
+            if (err) throw err;
+          });
 
           connection.query("SELECT * FROM products", function (err, res) {
-            var calcPrice = res[purchase_id].price * purchaseAmount;
+            var calcPrice = res[item_id].productPrice * purchaseAmount;
             console.log("\nYour toal is today is: " + calcPrice);
+            process.exit();
           });
         }
       });
@@ -97,11 +100,9 @@ function productPurchase() {
     });
 
 }
-
-
 function title() {
   var table = new Table({
-    head: ["                          ----- Welcome to Bamazon -----".green],
+    head: ["                          ----- Welcome to Bamazon -----".white],
     colWidths: [84]
   });
   console.log(table.toString());
