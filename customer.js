@@ -1,13 +1,9 @@
 var inquirer = require("inquirer");
-var table = require("cli-table");
 var mysql = require("mysql");
 var inquirer = require("inquirer");
 var Table = require("cli-table");
 var colors = require("colors");
-
 // Argv vars init
-
-
 command = process.argv[2];
 var connection = mysql.createConnection({
   host: "localhost",
@@ -22,8 +18,6 @@ connection.connect(function (err) {
   console.log("Connected as id: " + connection.threadId);
   queryAllProductsCLI();
 });
-
-
 var queryAllProductsCLI = function () {
   connection.query('SELECT * FROM products', function (err, res) {
     console.clear();
@@ -43,11 +37,8 @@ var queryAllProductsCLI = function () {
 };
 
 function productPurchase() {
-
   inquirer
-    .prompt([
-      // Here we create a basic text prompt.
-      {
+    .prompt([{
         type: "input",
         message: "What is the ItemID of the Product you want to purchase",
         name: "item_id"
@@ -66,40 +57,40 @@ function productPurchase() {
     ])
     .then(function (inquirerResponse) {
       if (inquirerResponse.confirm) {
-      connection.query("SELECT * from products", function (err, res) {
-       
-        var purchase_id = inquirerResponse.item_id; //id number the customer selected
-        var item_id = purchase_id - 1; //to match user choice with db item id
-        var purchaseAmount = inquirerResponse.amount; //number of units the customer selected
-        var availAmount = res[item_id].productStock;
-        if (purchaseAmount > availAmount) {
-          console.log("There is currently nout enough stock to fill your order")
-        } else {
-          console.log("Thank you for your purchase!");
-          var updatedAmount = availAmount - purchaseAmount;
+        connection.query("SELECT * from products", function (err, res) {
+          var purchase_id = inquirerResponse.item_id;
+          var item_id = purchase_id - 1;
+          var purchaseAmount = inquirerResponse.amount;
+          var availAmount = res[item_id].productStock;
+          if (purchaseAmount > availAmount) {
+            console.log("There is currently nout enough stock to fill your order")
+          } else {
+            console.log("Thank you for your purchase!");
+            var updatedAmount = availAmount - purchaseAmount;
 
-          connection.query("UPDATE products SET ? WHERE ?", [{
-            productStock: updatedAmount
-          }, {
-            item_id: purchase_id
-          }], function (err, res) {
-            if (err) throw err;
-          });
+            connection.query("UPDATE products SET ? WHERE ?", [{
+              productStock: updatedAmount
+            }, {
+              item_id: purchase_id
+            }], function (err, res) {
+              if (err) throw err;
+            });
 
-          connection.query("SELECT * FROM products", function (err, res) {
-            var calcPrice = res[item_id].productPrice * purchaseAmount;
-            console.log("\nYour toal is today is: " + calcPrice);
-            process.exit();
-          });
-        }
-      });
-      //inquirer confirm ending
-    } else {
-      queryAllProductsCLI();
-    }
+            connection.query("SELECT * FROM products", function (err, res) {
+              var calcPrice = res[item_id].productPrice * purchaseAmount;
+              console.log("\nYour total is today is: $" + calcPrice + "usd");
+              process.exit();
+            });
+          }
+        });
+        //inquirer confirm ending
+      } else {
+        queryAllProductsCLI();
+      }
     });
 
 }
+
 function title() {
   var table = new Table({
     head: ["                          ----- Welcome to Bamazon -----".white],
