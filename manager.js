@@ -28,6 +28,7 @@ function title() {
   console.log(table.toString());
 };
 var queryAllProductsCLI = function () {
+  console.clear();
   connection.query('SELECT * FROM products', function (err, res) {
     console.clear();
     // formatting for npm: cli-table
@@ -59,7 +60,7 @@ function managerConsole() {
         lowInventory();
       }
       if (inquirerResponse.query == "Restock Existing Inventory") {
-        console.log(inquirerResponse.query);
+        restockInventory();
       }
       if (inquirerResponse.query == "Add New Product") {
         addNewProduct();
@@ -68,6 +69,7 @@ function managerConsole() {
 }
 
 function lowInventory() {
+  console.clear();
   title();
   connection.query("SELECT * from products", function (err, res) {
     var table = new Table({
@@ -146,3 +148,54 @@ function addProductInquirer( productNameInput, productDepartmentInput, productPr
   queryAllProductsCLI();
 }
 
+function restockInventory() {
+  inquirer
+    .prompt([{
+        type: "input",
+        message: "What is the ItemID of the Product you want to restock?",
+        name: "add_item_id"
+      },
+      {
+        type: "input",
+        message: "How many would you like to add to inventory?",
+        name: "productAddInventory"
+      },
+      {
+        type: "confirm",
+        message: "Are you sure?",
+        name: "confirm",
+        default: true
+      }
+    ])
+    .then(function (inquirerResponse) {
+      if (inquirerResponse.confirm) {
+        connection.query("SELECT * from products", function (err, res) {
+          var add_item_id = inquirerResponse.add_item_id;
+          var item_id = add_item_id - 1;
+          var addInventory = inquirerResponse.productAddInventory;
+          var availAmount = res[item_id].productStock;
+          if (addInventory <= 0) {
+            console.log("No Inventory Added")
+          } else {
+            console.log("Added " + addInventory + "to " + res[item_id].productName +"'s inventory.");
+            var updatedAmount = availAmount + addInventory;
+
+            connection.query("UPDATE products SET ? WHERE ?", [{
+              productStock: updatedAmount
+            }, {
+              item_id: add_item_id
+            }], function (err, res) {
+              if (err) throw err;
+            });
+            console.clear();
+            queryAllProductsCLI();
+          }
+        });
+        //inquirer confirm ending
+      } else {
+        console.clear();
+        queryAllProductsCLI();
+      }
+    });
+
+}
