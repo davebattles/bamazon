@@ -41,32 +41,37 @@ var queryAllProductsCLI = function () {
 };
 
 function productPurchase() {
-  
+
   inquirer
     .prompt([
       // Here we create a basic text prompt.
       {
-        type: "list",
+        type: "input",
         message: "What is the ItemID of the Product you want to purchase",
-        input: ["item", "jobs", "service"],
         name: "item_id"
       },
       {
-        type: "input",
-        message: "What is the name of the product?",
-        name: "nameOfProduct"
-      },
-      {
-        type: "input",
-        message: "What is your starting bid? (default 1)",
-        name: "currentBidOfProduct"
+        type: "confirm",
+        message: "Are you sure?",
+        name: "confirm",
+        default: true
       }
     ])
     .then(function (inquirerResponse) {
-      typeOfProductIn = inquirerResponse.typeOfProduct;
-      nameOfProductIn = inquirerResponse.nameOfProduct;
-      currentBidOfProductIn = inquirerResponse.currentBidOfProduct;
-      addProductInquirer(typeOfProductIn, nameOfProductIn, currentBidOfProductIn);
+      if (inquirerResponse.confirm) {
+        console.log("Much todo");
+        //TODO: Check if item is in stock
+
+        // console.log("\nWelcome " + inquirerResponse.username);
+        // console.log("Your " + inquirerResponse.pokemon + " is ready for battle!\n");
+        // typeOfProductIn = inquirerResponse.typeOfProduct;
+        // nameOfProductIn = inquirerResponse.nameOfProduct;
+        // currentBidOfProductIn = inquirerResponse.currentBidOfProduct;
+        // addProductInquirer(typeOfProductIn, nameOfProductIn, currentBidOfProductIn);
+      } else {
+        queryAllProductsCLI();
+      }
+
     });
 }
 
@@ -78,7 +83,7 @@ function loading() {
   }, 1000);
 }
 
-function title () {
+function title() {
   var table = new Table({
     head: ["                          ----- Welcome to Bamazon -----".green],
     colWidths: [84]
