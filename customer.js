@@ -46,8 +46,11 @@ function queryAllProducts() {
 
 var queryAllProductsCLI = function() {
   connection.query('SELECT * FROM products', function(err, res) {
-    chalkAnimation.rainbow('Lorem ipsum dolor sit amet');
+    
       // formatting for npm: cli-table
+      
+
+
           
           var table = new Table({
               head: ["ItemID", "ProductName", "Department" ,"MSRP(usd)", "Inventory"],
@@ -70,8 +73,8 @@ function productPurchase () {
     {
       type: "list",
       message: "What is the ItemID of the Product you want to purchase",
-      choices: ["item","jobs","service"],
-      name: "typeOfProduct"
+      input: ["item","jobs","service"],
+      name: "item_id"
     },
     {
       type: "input",
@@ -91,4 +94,13 @@ function productPurchase () {
     currentBidOfProductIn = inquirerResponse.currentBidOfProduct;
     addProductInquirer(typeOfProductIn, nameOfProductIn, currentBidOfProductIn);
   }); 
+}
+
+
+function loading () {
+  var spinner = ora('Processing').start();
+  setTimeout(() => {
+	spinner.color = 'yellow';
+	spinner.text = 'Loading rainbows';
+}, 1000);
 }
